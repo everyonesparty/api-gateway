@@ -1,8 +1,8 @@
 package everyonesparty.apigateway.filter;
 
-import io.jsonwebtoken.Jwts;
+import everyonesparty.apigateway.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
@@ -14,15 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
-import java.util.Base64;
-
 @Component
 @Slf4j
 public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory<BasicAuthorizationHeaderFilter.Config> {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public BasicAuthorizationHeaderFilter(Environment env){
         super(Config.class);
@@ -30,11 +27,6 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
 
     public static class Config{
 
-    }
-
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
     @Override
@@ -47,31 +39,12 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
 
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer","");
-            if(!IsJwtValid(jwt)){
+            if(!jwtUtil.IsValidJwt(jwt)){
                 return onError(exchange, "JWT Token is not valid", HttpStatus.UNAUTHORIZED);
             }
             return chain.filter(exchange);
         };
     }
-
-    private boolean IsJwtValid(String jwt) {
-        boolean isValid = true;
-        String subject = null;
-        try{
-            subject = Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(jwt).getBody()
-                    .getSubject();
-        }catch (Exception ex){
-            isValid = false;
-        }
-
-        if(subject == null || subject.isEmpty())
-            isValid = false;
-
-        log.info("subject: {}", subject);
-        return isValid;
-    }
-
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
@@ -79,6 +52,4 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
         log.error(err);
         return response.setComplete();
     }
-
-
 }
