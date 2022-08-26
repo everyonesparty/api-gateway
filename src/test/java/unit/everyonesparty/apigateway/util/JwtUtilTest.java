@@ -1,10 +1,16 @@
 package everyonesparty.apigateway.util;
 
 import everyonesparty.apigateway.util.jwt.JwtUtil;
+import everyonesparty.apigateway.util.jwt.UserRole;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,16 +20,11 @@ class JwtUtilTest {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private static String testJwtToken;
-
-    @BeforeAll
-    static void beforeAll() {
-        testJwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMzk5ODI4OTA4Iiwicm9sZXMiOlsiS0FLQU9fVVNFUiJdLCJpYXQiOjE2NjE0ODM5MTQsImV4cCI6MTY2MTQ4NzUxNH0.NvredrPsG-MbXQv41qnlmprycjqxkrJrPozXBEnO1dw";
-
-    }
-
     @Test
     void IsValidJwt() {
+
+        // given
+        String testJwtToken = jwtUtil.createToken("0123456789", new HashSet<UserRole>(Arrays.asList(UserRole.KAKAO_USER)));
 
         // when
         boolean isValid = jwtUtil.IsValidJwt(testJwtToken);
@@ -34,6 +35,9 @@ class JwtUtilTest {
 
     @Test
     void hasKaKaoUserRole() {
+
+        // given
+        String testJwtToken = jwtUtil.createToken("0123456789", new HashSet<UserRole>(Arrays.asList(UserRole.KAKAO_USER)));
 
         // when
         boolean hasKaKaoUserRole = jwtUtil.hasKaKaoUserRole(testJwtToken);
