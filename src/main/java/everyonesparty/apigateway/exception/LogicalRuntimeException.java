@@ -11,12 +11,17 @@ import lombok.Data;
 public class LogicalRuntimeException extends RuntimeException{
     private RestError restError;
 
+    public LogicalRuntimeException(RestError restError){
+        this.restError = restError;
+    }
+
     /***
      * > 오로지 restError 를 인자로 받는 생성자만 허용
      * > LogicalRuntimeException 은 반드시 restError 를 가져야 함을 강제한다.
      * @param restError
      */
-    public LogicalRuntimeException(RestError restError){
+    public LogicalRuntimeException(RestError restError, Throwable ex){
+        super(ex);
         this.restError = restError;
     }
 

@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CommonError implements RestError {
 
-    INVALID_DATA(HttpStatus.BAD_REQUEST,"요청 오류 입니다.(의미상 오류: api 스팩은 맞지만 논리상 안맞는 요청)"),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "요청 오류 입니다.(형식상 오류: api 스팩에 안맞는 요청)"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 입니다.");
 
     private HttpStatus httpStatus;
