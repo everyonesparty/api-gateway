@@ -1,5 +1,7 @@
 package everyonesparty.apigateway.filter;
 
+import everyonesparty.apigateway.exception.LogicalRuntimeException;
+import everyonesparty.apigateway.exception.error.JwtError;
 import everyonesparty.apigateway.util.jwt.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +36,16 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
         return (exchange, chain) -> {
             ServerHttpRequest request =  exchange.getRequest();
 
-            if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
-                return onError(exchange,"No authorization header",HttpStatus.UNAUTHORIZED);
+            if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+                throw new LogicalRuntimeException(JwtError.INVALID_JWT_TOKEN);
+            }
 
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer","");
             if(!jwtUtil.IsValidJwt(jwt)){
-                return onError(exchange, "JWT Token is not valid", HttpStatus.UNAUTHORIZED);
+                throw new LogicalRuntimeException(JwtError.INVALID_JWT_TOKEN);
             }
             return chain.filter(exchange);
         };
-    }
-
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        log.error(err);
-        return response.setComplete();
     }
 }

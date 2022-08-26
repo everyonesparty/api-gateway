@@ -41,7 +41,6 @@ public class JwtUtil {
     }
 
     public boolean IsValidJwt(String jwt) {
-        boolean isValid = true;
         String subject = null;
         try{
             subject = Jwts.parser().setSigningKey(secretKey)
@@ -49,16 +48,16 @@ public class JwtUtil {
                     .getSubject();
         }catch (Exception ex){
             log.error("jwt parsing error. {}", ex.getMessage());
-            isValid = false;
+            return false;
         }
 
         if(subject == null || subject.isEmpty()){
             log.error("subject is invalid. subject: {}", subject);
-            isValid = false;
+            return false;
         }
 
         log.info("extracted subject is {}", subject);
-        return isValid;
+        return true;
     }
 
 
