@@ -1,6 +1,6 @@
 package everyonesparty.apigateway.filter;
 
-import everyonesparty.apigateway.util.JwtUtil;
+import everyonesparty.apigateway.util.jwt.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
