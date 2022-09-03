@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum JwtError implements RestError {
 
     FORBIDDEN_JWT_TOKEN(HttpStatus.FORBIDDEN, "JWT: 해당 리소스에 접근할 권한이 없습니다.(토큰은 유효하지만 권한 없음)"),
+    NOT_EXIST_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "JWT: 토큰 없는 요청 입니다."),
     INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "JWT: 유효하지 않은 토큰 입니다.");
 
     private HttpStatus httpStatus;

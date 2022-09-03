@@ -33,7 +33,7 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
             ServerHttpRequest request =  exchange.getRequest();
 
             if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
-                throw new LogicalRuntimeException(JwtError.INVALID_JWT_TOKEN);
+                throw new LogicalRuntimeException(JwtError.NOT_EXIST_JWT_TOKEN);
             }
 
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
