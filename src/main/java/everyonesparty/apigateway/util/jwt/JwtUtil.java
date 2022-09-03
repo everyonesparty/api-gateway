@@ -40,6 +40,13 @@ public class JwtUtil {
                 .compact();
     }
 
+
+    /***
+     * > 디비 안거치는 단순 jwt 검증
+     * > TODO: 필요 시 디비에 저장된 사용자 아이디와 토큰에 포함된 사용자 아이디 검증하는 별도 기능 추가
+     * @param jwt
+     * @return
+     */
     public boolean IsValidJwt(String jwt) {
         String subject = null;
         try{
