@@ -3,3 +3,4 @@ spring:
     config:
       uri: "http://localhost:9092"
       name: "gateway"
+      profile: ${customProfile} # vm option 으로 넘겨주기!
