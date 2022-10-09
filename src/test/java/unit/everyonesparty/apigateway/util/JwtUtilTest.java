@@ -13,7 +13,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@ActiveProfiles("test") // test profile 로 설정해서 {}-test.yml 을 바라보게 만듦
+@ActiveProfiles("codetest") // test profile 로 설정해서 {}-codetest.yml 을 바라보게 만듦
 @SpringBootTest(classes = JwtUtil.class)
 class JwtUtilTest {
     
