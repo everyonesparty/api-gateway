@@ -5,11 +5,15 @@ import everyonesparty.apigateway.util.jwt.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+@ActiveProfiles("test") // test profile 로 설정해서 {}-test.yml 을 바라보게 만듦
 @SpringBootTest(classes = JwtUtil.class)
 class JwtUtilTest {
     
@@ -17,7 +21,7 @@ class JwtUtilTest {
     private JwtUtil jwtUtil;
 
     @Test
-    void IsValidJwt() {
+    void IsValidJwt_성공() {
 
         // given
         String testJwtToken = jwtUtil.createToken("0123456789", new HashSet<UserRole>(Arrays.asList(UserRole.KAKAO_USER)));
@@ -27,6 +31,24 @@ class JwtUtilTest {
 
         // then
         assertTrue(isValid);
+    }
+
+    @Test
+    void IsValidJwt_시크릿키가_달라질때() throws NoSuchFieldException, IllegalAccessException {
+
+        // given
+        String testJwtToken = jwtUtil.createToken("0123456789", new HashSet<UserRole>(Arrays.asList(UserRole.KAKAO_USER)));
+
+        // when
+        Class aClass = JwtUtil.class;
+        Field field = aClass.getDeclaredField("secretKey");
+        field.setAccessible(true);
+        field.set(jwtUtil, "dummyvalue");
+
+        boolean isValid = jwtUtil.IsValidJwt(testJwtToken);
+
+        // then
+        assertTrue(!isValid);
     }
 
     @Test
