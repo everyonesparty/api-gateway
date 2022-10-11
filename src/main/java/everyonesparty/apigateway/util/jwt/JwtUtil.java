@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import java.util.*;
 
 @Slf4j
 @Component
+@RefreshScope
 public class JwtUtil {
 
     @Value("${jwt.secret}")
@@ -92,5 +94,4 @@ public class JwtUtil {
     private Optional<ArrayList<String>> getUserRoles(Claims parsedJwt) {
         return Optional.ofNullable((ArrayList<String>) parsedJwt.get("roles"));
     }
-
 }
