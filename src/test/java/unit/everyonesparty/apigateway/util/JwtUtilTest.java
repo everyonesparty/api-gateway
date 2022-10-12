@@ -14,7 +14,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
-@ActiveProfiles("codetest") // test profile 로 설정해서 {}-codetest.yml 을 바라보게 만듦
+@ActiveProfiles("codetest") // test profile 로 설정해서 {}-codetest.yml 을 바라보게 만듦 g
 @SpringBootTest(classes = JwtUtil.class)
 class JwtUtilTest {
     
