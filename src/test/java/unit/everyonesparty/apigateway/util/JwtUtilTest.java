@@ -2,6 +2,7 @@ package everyonesparty.apigateway.util;
 
 import everyonesparty.apigateway.util.jwt.JwtUtil;
 import everyonesparty.apigateway.util.jwt.UserRole;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -26,9 +27,9 @@ class JwtUtilTest {
 
         // given
         String testJwtToken = jwtUtil.createToken("0123456789", new HashSet<UserRole>(Arrays.asList(UserRole.KAKAO_USER)));
-
+        Optional<Claims> claims = jwtUtil.parseJwt(testJwtToken);
         // when
-        boolean isValid = jwtUtil.IsValidJwt(testJwtToken);
+        boolean isValid = jwtUtil.IsValidJwt(claims);
 
         // then
         assertTrue(isValid);
