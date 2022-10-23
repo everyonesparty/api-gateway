@@ -28,6 +28,38 @@ public class JwtUtil {
     }
 
     /***
+     * > 디비 안거치는 단순 jwt 검증
+     * > TODO: 필요 시 디비에 저장된 사용자 아이디와 토큰에 포함된 사용자 아이디 검증하는 별도 기능 추가
+     */
+    public boolean IsValidJwt(Optional<Claims> parsedJwt) {
+        return parsedJwt
+                .flatMap(this::getSubject)
+                .filter(subject -> !subject.isEmpty())
+                .map(subject -> {
+                    log.info("extracted subject is {}", subject);
+                    return true;
+                }).orElse(false);
+    }
+
+    public Optional<Claims> parseJwt(String jwt) {
+        try {
+            return Optional.ofNullable(Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(jwt).getBody());
+        } catch (Exception ex) {
+            log.error("jwt parsing error. {}", ex.getMessage(), ex);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<String> getSubject(Claims parsedJwt) {
+        return Optional.ofNullable(parsedJwt.getSubject());
+    }
+
+
+
+
+    /***
      * jwt token 생성을 front-server 로 위임
      */
     @Deprecated
@@ -41,20 +73,6 @@ public class JwtUtil {
                 .setExpiration(new Date(now.getTime() + tokenValidMilisecond)) // 토큰만료일자
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
                 .compact();
-    }
-
-    /***
-     * > 디비 안거치는 단순 jwt 검증 -> secretKey 로 정상적으로 까지기만 하면 통과되는 인증 필터
-     * > TODO: 필요 시 디비에 저장된 사용자 아이디와 토큰에 포함된 사용자 아이디 검증하는 별도 기능 추가
-     */
-    public boolean IsValidJwt(String jwt) {
-        return parseJwt(jwt)
-                .flatMap(this::getSubject)
-                .filter(subject -> !subject.isEmpty())
-                .map(subject -> {
-                    log.info("extracted subject is {}", subject);
-                    return true;
-                }).orElse(false);
     }
 
     public boolean hasKaKaoUserRole(String jwt){
@@ -74,21 +92,6 @@ public class JwtUtil {
                     return true;
                 })
                 .orElse(false);
-    }
-
-    private Optional<Claims> parseJwt(String jwt) {
-        try {
-            return Optional.ofNullable(Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(jwt).getBody());
-        } catch (Exception ex) {
-            log.error("jwt parsing error. {}", ex.getMessage(), ex);
-            return Optional.empty();
-        }
-    }
-
-    private Optional<String> getSubject(Claims parsedJwt) {
-        return Optional.ofNullable(parsedJwt.getSubject());
     }
 
     private Optional<ArrayList<String>> getUserRoles(Claims parsedJwt) {
