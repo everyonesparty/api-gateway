@@ -36,7 +36,7 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
         return (exchange, chain) -> {
             String jwtString = getJwtString(exchange.getRequest());
 
-            Optional<Claims> parsedJwt = parseClaims(jwtString);
+            Optional<Claims> parsedJwt = parseJwt(jwtString);
 
             if(!jwtUtil.IsValidJwt(parsedJwt)){
                 throw new LogicalRuntimeException(JwtError.INVALID_JWT_TOKEN);
@@ -54,7 +54,7 @@ public class BasicAuthorizationHeaderFilter extends AbstractGatewayFilterFactory
         return request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
     }
 
-    private Optional<Claims> parseClaims(String authorizationHeader) {
+    private Optional<Claims> parseJwt(String authorizationHeader) {
         String jwt = authorizationHeader.replace("Bearer","");
         return jwtUtil.parseJwt(jwt);
     }
